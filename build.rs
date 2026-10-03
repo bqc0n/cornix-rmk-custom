@@ -12,9 +12,16 @@ use const_gen::*;
 use xz2::read::XzEncoder;
 
 fn main() {
-    println!("cargo:rerun-if-changed=keyboard.toml");
+    // Track the same config that rmk-macro reads, including reset builds and
+    // caller-provided overrides. Switching paths must also invalidate Cargo's
+    // cached macro expansion (even if both files already exist).
+    println!("cargo:rerun-if-env-changed=KEYBOARD_TOML_PATH");
+    let keyboard_toml = env::var_os("KEYBOARD_TOML_PATH")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| PathBuf::from("keyboard.toml"));
+    println!("cargo:rerun-if-changed={}", keyboard_toml.display());
     println!("cargo:rerun-if-changed=vial.json");
-    generate_vial_config();
+    generate_vial_config(&keyboard_toml);
 
     // Make `memory.x` available to the linker.
     let out = &PathBuf::from(env::var_os("OUT_DIR").unwrap());
@@ -31,14 +38,15 @@ fn main() {
     println!("cargo:rustc-link-arg=-Tdefmt.x");
 }
 
-fn generate_vial_config() {
+fn generate_vial_config(keyboard_toml: &Path) {
     let out_file = Path::new(&env::var_os("OUT_DIR").unwrap()).join("config_generated.rs");
 
     let p = Path::new("vial.json");
     let mut content = String::new();
     match File::open(p) {
         Ok(mut file) => {
-            file.read_to_string(&mut content).expect("Cannot read vial.json");
+            file.read_to_string(&mut content)
+                .expect("Cannot read vial.json");
         }
         Err(e) => println!("Cannot find vial.json {:?}: {}", p, e),
     };
@@ -64,7 +72,7 @@ fn generate_vial_config() {
     // effect). config_generated.rs is `include!`d by the macro, so embedding a
     // hash of keyboard.toml here makes any toml edit change this file and
     // invalidate the crate, recompiling + re-expanding with the new config.
-    let toml_bytes = fs::read("keyboard.toml").unwrap_or_default();
+    let toml_bytes = fs::read(keyboard_toml).expect("Cannot read the active keyboard TOML");
     let mut hasher = std::collections::hash_map::DefaultHasher::new();
     std::hash::Hasher::write(&mut hasher, &toml_bytes);
     let toml_fp = std::hash::Hasher::finish(&hasher);

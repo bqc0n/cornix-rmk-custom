@@ -29,7 +29,7 @@ install_crate = { crate_name = "flip-link", binary = "flip-link", test_arg = ["-
 description = "Compile central + peripheral (release)."
 dependencies = ["flip-link"]
 command = "cargo"
-args = ["build", "--release", "--bin", "central", "--bin", "peripheral"]
+args = ["build", "--locked", "--release", "--bin", "central", "--bin", "peripheral"]
 
 [tasks.dist-dir]
 private = true
@@ -42,7 +42,7 @@ private = true
 dependencies = ["install-llvm-tools", "build"]
 install_crate = { crate_name = "cargo-binutils", binary = "cargo", test_arg = ["objcopy", "--help"] }
 command = "cargo"
-args = ["objcopy", "--release", "--bin", "central", "--", "-O", "ihex", "target/cornix-left.hex"]
+args = ["objcopy", "--locked", "--release", "--bin", "central", "--", "-O", "ihex", "target/cornix-left.hex"]
 
 [tasks.uf2-left]
 private = true
@@ -57,7 +57,7 @@ private = true
 dependencies = ["install-llvm-tools", "build"]
 install_crate = { crate_name = "cargo-binutils", binary = "cargo", test_arg = ["objcopy", "--help"] }
 command = "cargo"
-args = ["objcopy", "--release", "--bin", "peripheral", "--", "-O", "ihex", "target/cornix-right.hex"]
+args = ["objcopy", "--locked", "--release", "--bin", "peripheral", "--", "-O", "ihex", "target/cornix-right.hex"]
 
 [tasks.uf2-right]
 private = true
@@ -113,7 +113,7 @@ echo generated keyboard.reset.toml (clear_storage = true)
 private = true
 dependencies = ["gen-reset-toml", "flip-link"]
 command = "cargo"
-args = ["build", "--release", "--bin", "central", "--bin", "peripheral"]
+args = ["build", "--locked", "--release", "--bin", "central", "--bin", "peripheral"]
 env = { KEYBOARD_TOML_PATH = "${CARGO_MAKE_WORKING_DIRECTORY}/keyboard.reset.toml", CARGO_TARGET_DIR = "target/reset" }
 
 [tasks.hex-left-reset]
@@ -121,7 +121,7 @@ private = true
 dependencies = ["install-llvm-tools", "build-reset"]
 install_crate = { crate_name = "cargo-binutils", binary = "cargo", test_arg = ["objcopy", "--help"] }
 command = "cargo"
-args = ["objcopy", "--release", "--bin", "central", "--", "-O", "ihex", "target/reset/cornix-left-reset.hex"]
+args = ["objcopy", "--locked", "--release", "--bin", "central", "--", "-O", "ihex", "target/reset/cornix-left-reset.hex"]
 env = { KEYBOARD_TOML_PATH = "${CARGO_MAKE_WORKING_DIRECTORY}/keyboard.reset.toml", CARGO_TARGET_DIR = "target/reset" }
 
 [tasks.uf2-left-reset]
@@ -136,7 +136,7 @@ private = true
 dependencies = ["install-llvm-tools", "build-reset"]
 install_crate = { crate_name = "cargo-binutils", binary = "cargo", test_arg = ["objcopy", "--help"] }
 command = "cargo"
-args = ["objcopy", "--release", "--bin", "peripheral", "--", "-O", "ihex", "target/reset/cornix-right-reset.hex"]
+args = ["objcopy", "--locked", "--release", "--bin", "peripheral", "--", "-O", "ihex", "target/reset/cornix-right-reset.hex"]
 env = { KEYBOARD_TOML_PATH = "${CARGO_MAKE_WORKING_DIRECTORY}/keyboard.reset.toml", CARGO_TARGET_DIR = "target/reset" }
 
 [tasks.uf2-right-reset]

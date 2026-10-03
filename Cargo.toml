@@ -6,12 +6,12 @@ edition = "2024"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-# Pinned to a specific rmk `main` revision (the merge of the charge-only USB
-# fix, HaoboGu/rmk#911 — a never-enumerated USB device no longer counts as a
-# routable transport, so BLE keeps working on chargers / power banks). The
+# Pinned to a specific rmk `main` revision including the charge-only USB fix
+# (HaoboGu/rmk#911) and the async matrix wait fix (a41b338d). The latter uses
+# select_array to own and pin the GPIO wait futures correctly. The
 # 0.8.x releases still lack the tap-hold / morse fix series, so we stay on the
 # development line. Bump the rev deliberately, not automatically.
-rmk = { git = "https://github.com/HaoboGu/rmk", rev = "00a42c35cc8b60e1b331c4c1226a906d9e81b6d4", features = [
+rmk = { git = "https://github.com/HaoboGu/rmk", rev = "a41b338da87ce0455217ff44e92d187233d6a867", features = [
     "nrf52840_ble",
     "split",
     "async_matrix",

@@ -18,8 +18,8 @@ WS2812 status LEDs.
 - 4 layers, hold-tap / layer-tap thumb keys, a rotary encoder on each half.
 - 3 switchable BLE host profiles, switched with a single press.
 - Low-latency split link (1M PHY) that stays responsive under fast typing.
-- Reliable tap-hold: fast rolls keep their taps, a lone soft tap registers, and
-  holds (layers / modifiers) engage the instant another key is pressed.
+- Tap-hold: fast rolls keep their taps, a lone tap registers, and nested
+  presses and releases resolve holds (layers / modifiers).
 - WS2812 status LEDs (2 per half) for Bluetooth profile, split link, battery and
   charging — driven by the PWM peripheral + DMA so they never disturb the radio.
 - Battery reporting from the on-board divider.
@@ -33,12 +33,13 @@ fixes. In practice:
 
 - Rolling `space → letter` (releasing space first) stays a tap — no crushed words.
 - A lone, soft press of a tap-hold key still emits its tap.
-- Holding a tap-hold key and pressing another key engages the hold (layer /
-  modifier) immediately, independent of the hold timeout.
+- Holding a tap-hold key while pressing and releasing another key resolves
+  the hold (layer / modifier) before the hold timeout.
 - Switching the BLE host profile takes a single press.
 
 Tuning lives in `[behavior.morse]` in `keyboard.toml`: `permissive_hold` +
-`enable_flow_tap` (150 ms prior-idle window) with a 1500 ms hold/gap timeout.
+`enable_flow_tap` (150 ms prior-idle window) with a 400 ms hold/gap timeout.
+Settings already saved through Vial take precedence over these defaults.
 
 ## LED indicators
 

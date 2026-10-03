@@ -70,7 +70,7 @@ dcdc_reg0_voltage = "3V3"
 enabled = true
 clear_storage = false
 # Place storage below the Adafruit bootloader (0xF4000) and well above the
-# firmware image. 0xA0000 + 32 sectors (128K) -> 0xA0000..0xA8000.
+# firmware image. 0xA0000 + 32 sectors (128K) -> 0xA0000..0xC0000.
 start_addr = 0xA0000
 num_sectors = 32
 
@@ -85,11 +85,6 @@ split_peripherals_num = 1
 
 # Hold-tap defaults for the layer-tap / mod-tap keys.
 [behavior.morse]
-# Hold-preferred behaviour: pressing ANY other key while a layer-tap / mod-tap is
-# held resolves it immediately as HOLD ("hold on other key press"). A lone quick
-# press+release (shorter than hold_timeout) is still a tap. So "held = hold,
-# short tap = tap", which is what we want for reliable layer/profile access.
-#
 # permissive_hold: a tap-hold key only becomes a HOLD if another key is pressed
 # AND released while it is held. So rolling "space -> letter" (release space
 # first) keeps space as a TAP, while deliberate layer use (hold space, fully
@@ -100,9 +95,8 @@ enable_flow_tap = true
 prior_idle_time = "150ms"
 permissive_hold = true
 # Standalone tap/hold time boundary: a key held alone longer than this becomes a
-# hold. This does NOT slow layer/mod access: hold_on_other_press fires the hold
-# the instant another key is pressed, independent of hold_timeout — this only
-# matters when a tap-hold key is held alone with nothing else pressed. Set to
+# hold. In permissive_hold mode, a nested press+release can resolve a hold
+# before this timeout. hold_on_other_press is not enabled here. Set to
 # 400ms to match the live Vial tuning (faster standalone hold resolution).
 hold_timeout = "400ms"
 gap_timeout = "400ms"
